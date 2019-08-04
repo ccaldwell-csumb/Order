@@ -1,5 +1,6 @@
 class OrderController < ApplicationController
 
+<<<<<<< HEAD
   include HTTParty
   @headers = { 'Content-Type' => 'application/json',
                 'ACCEPT' => 'application/json'}
@@ -7,6 +8,13 @@ class OrderController < ApplicationController
   @order_uri = 'http://localhost:8080'            
   @customer_uri = 'http://localhost:8081'
   @item_uri = 'http://localhost:8082'
+=======
+  itemCall = double(itemCall)
+  
+  @item = {"id"=>1, "description"=>"Diamond Ring", "price"=>"999.99", "stockQty"=>3} 
+  
+  allow(itemCall).to receive(:itemId).and_return(render json: @item, status: :ok)
+>>>>>>> 19912a51bfa9f1b97115343e6b417b760793bbb2
 
   def create
     
@@ -15,8 +23,13 @@ class OrderController < ApplicationController
       return render :json => response.to_json, :status => 400
     end
 
+<<<<<<< HEAD
     
    @order = Order.create(params)
+=======
+    item = itemCall(params['itemId'])
+    head 201
+>>>>>>> 19912a51bfa9f1b97115343e6b417b760793bbb2
   
     
     # @customer = Customer.create(order_params)
