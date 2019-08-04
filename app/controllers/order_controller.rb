@@ -1,5 +1,10 @@
 class OrderController < ApplicationController
 
+  itemCall = double(itemCall)
+  
+  @item = {"id"=>1, "description"=>"Diamond Ring", "price"=>"999.99", "stockQty"=>3} 
+  
+  allow(itemCall).to receive(:itemId).and_return(render json: @item, status: :ok)
 
   def create
     
@@ -8,6 +13,7 @@ class OrderController < ApplicationController
       return render :json => response.to_json, :status => 400
     end
 
+    item = itemCall(params['itemId'])
     head 201
   
     
