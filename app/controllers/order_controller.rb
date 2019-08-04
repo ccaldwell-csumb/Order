@@ -1,5 +1,12 @@
 class OrderController < ApplicationController
 
+  include HTTParty
+  @headers = { 'Content-Type' => 'application/json',
+                'ACCEPT' => 'application/json'}
+                
+  @order_uri = 'http://localhost:8080'            
+  @customer_uri = 'http://localhost:8081'
+  @item_uri = 'http://localhost:8082'
 
   def create
     
@@ -8,13 +15,14 @@ class OrderController < ApplicationController
       return render :json => response.to_json, :status => 400
     end
 
-    head 201
+    
+   @order = Order.create(params)
   
     
     # @customer = Customer.create(order_params)
     # @customer.lastOrder = 0
     # @customer.lastOrder2 = 0
-    # @customer.lastOrder3 = 0c
+    # @customer.lastOrder3 = 0
     # @customer.award = 0
     #
     # if @customer.save
@@ -22,6 +30,8 @@ class OrderController < ApplicationController
     # else
     #   render json: @customer.errors, status: 400
     # end
+    
+     head 201
   end
 
 
