@@ -9,14 +9,18 @@ require 'httparty'
 # o	lookup an item by item id
 
 
-class CustomerQuery
+class OrderClient
   include HTTParty
 
   # default_options.update(verify: false) # Turn off SSL
-  base_uri ''
-  format :json
+  @headers = { 'Content-Type' => 'application/json',
+                'ACCEPT' => 'application/json'}
+                
+  @order_uri = 'http://localhost:8080'            
+  @customer_uri = 'http://localhost:8081'
+  @item_uri = 'http://localhost:8082'
 
-  def self.registerRequest(args)
+  def self.createNewOrder(args)
 
     body = { email: args[2], firstName: args[1], lastName: args[0] }
     response = HTTParty.post(
@@ -29,7 +33,7 @@ class CustomerQuery
     puts response.body
   end
 
-  def self.emailRequest(args)
+  def self.retrieveBy(args)
     body = { email: args[0] }
     response = HTTParty.get(
         'http://localhost:3000/customers/:email',
@@ -40,7 +44,37 @@ class CustomerQuery
     puts response.body
   end
 
-  def self.idRequest(args)
+  def self.registerCustomer(args)
+    body = { id: args[0] }
+    response = HTTParty.get(
+        "http://localhost:3000/customers/#{args[0]}",
+        :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json' }
+    )
+    puts "status code " + response.code.to_s
+    puts response.body
+  end
+  
+  def self.lookupCustomerBy(args)
+    body = { id: args[0] }
+    response = HTTParty.get(
+        "http://localhost:3000/customers/#{args[0]}",
+        :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json' }
+    )
+    puts "status code " + response.code.to_s
+    puts response.body
+  end
+  
+  def self.createNewItem(args)
+    body = { id: args[0] }
+    response = HTTParty.get(
+        "http://localhost:3000/customers/#{args[0]}",
+        :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json' }
+    )
+    puts "status code " + response.code.to_s
+    puts response.body
+  end
+  
+  def self.lookupItemById(args)
     body = { id: args[0] }
     response = HTTParty.get(
         "http://localhost:3000/customers/#{args[0]}",
@@ -64,15 +98,15 @@ while command != 'quit'
   when 'register'
     puts 'enter lastName, firstName and email for new customer'
     args = gets.chomp!.split(' ')
-    CustomerQuery.registerRequest(args)
+    OrderClient.registerRequest(args)
   when 'email'
     puts 'enter email'
     args = gets.chomp!.split(' ')
-    CustomerQuery.emailRequest(args)
+    OrderClient.emailRequest(args)
   when 'id'
     puts 'enter id'
     args = gets.chomp!
-    CustomerQuery.idRequest(args)
+    OrderClient.idRequest(args)
   when 'quit'
     return
   end
