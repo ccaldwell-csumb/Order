@@ -37,7 +37,23 @@ class OrderController < ApplicationController
 
 
   def show
-
+    if params.keys.include? 'id'
+      begin
+        @order = Order.find(params[:id])
+      rescue ActiveRecord::RecordNotFound => e
+        @order = nil
+      end
+      
+      if @order.nil?
+        head :not_found
+      else
+        render json: @order, status: :ok
+      end
+      
+    end
+  
+        
+      
     # if params.keys.include? 'email'
     #   key = 'email'
     # elsif params.keys.include? 'id'

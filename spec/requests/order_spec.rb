@@ -52,6 +52,42 @@ RSpec.describe 'Orders', type: :request do
         #   #expect(json_response.length).to eq 0
         # end 
     end
+
+      before(:each) do 
+        #create database record for wedding band
+        Order.create(itemId: 1, description: "Diamond Ring", customerId: 3, price: 999.99, award: 0.00, total: 999.99) 
+      end
+      
+      describe "GET /orders/:id" do
+        
+        it 'get of order by :id should return item information' do
+          
+          headers = { "CONTENT_TYPE" => "application/json" ,
+               "ACCEPT" => "application/json"}    # Rails 4
+          
+          get '/orders/1', headers: headers
+          expect(response).to have_http_status(:ok)
+          order = JSON.parse(response.body) 
+          expect(order['itemId']).to eq 1
+          expect(order['description']).to eq "Diamond Ring"
+          expect(order['customerId']).to eq 3
+          expect(order['price']).to eq 999.99
+          expect(order['award']).to eq 0.00
+          expect(order['total']).to eq 999.99
+          
+        end
+        
+        it 'get order by invalid :id - should return 404' do
+        
+          headers = { "CONTENT_TYPE" => "application/json",
+                       "ACCEPT" => "application/json"}
+          get '/orders/3', headers: headers
+          expect(response).to have_http_status(:not_found)
+          
+        end
+        
+        
+      end
     
     # describe "POST /items" do
     #     # it 'post of new item should return item information' do
