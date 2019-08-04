@@ -1,260 +1,202 @@
 require 'rails_helper'
 
 RSpec.describe 'Orders', type: :request do
+  
+  @headers = { "ACCEPT" => "application/json"}
 
-  # describe 'PUT /customer/order' do
-  #   before(:all) do
-  #     @email = 'test@test.com'
-  #     @firstName = 'John'
-  #     @lastName = 'Doe'
+  # before(:each) do 
+        
   #   end
-  #
-  #   it 'updates customer with order data and return 204' do
-  #
-  #     @customer = Customer.create(
-  #         email: @email,
-  #         firstName: @firstName,
-  #         lastName: @lastName
-  #     )
-  #     expect(@customer.save).to eq(true)
-  #
-  #     expect(@customer).to_not eq(nil)
-  #     expect(@customer.lastOrder).to eq(nil)
-  #     expect(@customer.award).to eq(nil)
-  #     expect(@customer.id).to_not eq(nil)
-  #
-  #     price = 123.45
-  #
-  #     order = {
-  #         id: 12345,
-  #         itemId: 1,
-  #         description: 'An Item',
-  #         customerId: @customer.id,
-  #         price: price,
-  #         award: 0.0,
-  #         total: price
-  #     }
-  #
-  #     put '/customers/order', params: order
-  #
-  #     # expect status code 204
-  #     expect(response.status).to eq(204)
-  #     expect(response.body).to eq('')
-  #   end
-  #
-  #   it 'returns 400 if error' do
-  #     put '/customers/order', params: {}
-  #     expect(response.status).to eq(400)
-  #     expect(response.body).to eq('')
-  #   end
-  #
-  #   it 'Customer gets award on the 4th buy for 10% of the avg last 3 orders' do
-  #
-  #     @customer = Customer.create(
-  #         email: @email,
-  #         firstName: @firstName,
-  #         lastName: @lastName
-  #     )
-  #     expect(@customer.save).to eq(true)
-  #
-  #     expect(@customer).to_not eq(nil)
-  #     expect(@customer.lastOrder).to eq(nil)
-  #     expect(@customer.award).to eq(nil)
-  #     expect(@customer.id).to_not eq(nil)
-  #
-  #     price = 123.45
-  #
-  #     order = {
-  #         id: 12345,
-  #         itemId: 1,
-  #         description: 'An Item',
-  #         customerId: @customer.id,
-  #         price: price,
-  #         award: 0.0,
-  #         total: price
-  #     }
-  #
-  #     # First Purchase
-  #     put '/customers/order', params: order
-  #     expect(response.status).to eq(204)
-  #     @customer.reload
-  #     expect(@customer.lastOrder).to eq(price)
-  #     expect(@customer.lastOrder2).to_not eq(price)
-  #     expect(@customer.lastOrder3).to_not eq(price)
-  #     expect(@customer.award).to eq(nil)
-  #
-  #     # 2nd Purchase
-  #     put '/customers/order', params: order
-  #     expect(response.status).to eq(204)
-  #     @customer.reload
-  #     expect(@customer.lastOrder).to eq(price)
-  #     expect(@customer.lastOrder2).to eq(price)
-  #     expect(@customer.lastOrder3).to_not eq(price)
-  #     expect(@customer.award).to eq(nil)
-  #
-  #     # 3nd Purchase
-  #     put '/customers/order', params: order
-  #     expect(response.status).to eq(204)
-  #     @customer.reload
-  #     expect(@customer.lastOrder).to eq(price)
-  #     expect(@customer.lastOrder2).to eq(price)
-  #     expect(@customer.lastOrder3).to eq(price)
-  #     expect(@customer.award).to eq(price * 3 / 3 * 0.1)
-  #
-  #     # 4th Purchase
-  #     put '/customers/order', params: order
-  #     expect(response.status).to eq(204)
-  #     @customer.reload
-  #     expect(@customer.lastOrder).to eq(0)
-  #     expect(@customer.lastOrder2).to eq(0)
-  #     expect(@customer.lastOrder3).to eq(0)
-  #     expect(@customer.award).to eq(0)
-  #
-  #   end
-  #
-  #
-  # end
-  #
-  #
-  # describe 'GET /customers?email=:email' do
-  #   before(:all) do
-  #     @email = 'test@test.com'
-  #     @firstName = 'John'
-  #     @lastName = 'Doe'
-  #   end
-  #
-  #   it 'gets the right customer with data for the id and returns 200 status' do
-  #     # Add customer to database
-  #     @customer = Customer.create(
-  #         email: @email,
-  #         firstName: @firstName,
-  #         lastName: @lastName
-  #     )
-  #     expect(@customer.save).to eq(true)
-  #
-  #     # retrieve customer
-  #     email = @email
-  #     get '/customers/:email', params: { email: email }
-  #
-  #     # expect status code 200
-  #     expect(response.status).to eq(200)
-  #     json = JSON.parse(response.body)
-  #
-  #     # ensure customer is right one with right data
-  #     expect(json['email']).to eq(email)
-  #     expect(json['id']).to_not eq(nil)
-  #     expect(json['id']).to eq(1)
-  #     expect(json.keys).to contain_exactly(
-  #                              'id',
-  #                              'email',
-  #                              'lastName',
-  #                              'firstName',
-  #                              'lastOrder',
-  #                              'lastOrder2',
-  #                              'lastOrder3',
-  #                              'award'
-  #                          )
-  #
-  #   end
-  #
-  #   it "returns 404 for customer not found" do
-  #     # retrieve non-existant customer
-  #     get '/customers/:email', params: { email: 'steve@mail.com' }
-  #
-  #     #expect status code 404 not found
-  #     expect(@response.status).to eq(404)
-  #   end
-  # end
-  #
-  #
-  # describe "GET /customers?id=:id" do
-  #   before(:all) do
-  #     @email = 'test@test.com'
-  #     @firstName = 'John'
-  #     @lastName = 'Doe'
-  #   end
-  #
-  #   it 'gets the right customer with data for the id and returns 200 status' do
-  #     # Add customer to database
-  #     @customer = Customer.create(
-  #         email: @email,
-  #         firstName: @firstName,
-  #         lastName: @lastName
-  #     )
-  #     expect(@customer.save).to eq(true)
-  #
-  #     # retrieve customer
-  #     id = @customer.id
-  #     get "/customers/#{id}"
-  #
-  #     # expect status code 200
-  #     expect(response.status).to eq(200)
-  #     json = JSON.parse(response.body)
-  #
-  #     # ensure customer is right one with right data
-  #     expect(json['id']).to eq(id)
-  #     expect(json.keys).to contain_exactly(
-  #                              'id',
-  #                              'email',
-  #                              'lastName',
-  #                              'firstName',
-  #                              'lastOrder',
-  #                              'lastOrder2',
-  #                              'lastOrder3',
-  #                              'award')
-  #   end
-  #
-  #   it "returns 404 for customer not found" do
-  #     # retrieve non-existant customer
-  #     get '/customers/545454'
-  #
-  #     #expect status code 404 not found
-  #     expect(@response.status).to eq(404)
-  #   end
-  # end
-  #
-  #
-  # describe "POST /customers" do
-  #   before(:all) do
-  #     @email = 'test@test.com'
-  #     @firstName = 'John'
-  #     @lastName = 'Doe'
-  #   end
-  #
-  #   it "can create a new customer with customer data, and 201 status" do
-  #
-  #     post "/customers", :params => { email: @email, firstName: @firstName, lastName: @lastName }
-  #
-  #     expect(response.status).to eq(201)
-  #     json = JSON.parse(response.body)
-  #
-  #     expect(json['email']).to eq(@email)
-  #     expect(json['firstName']).to eq(@firstName)
-  #     expect(json['lastName']).to eq(@lastName)
-  #     expect(json.keys).to include('id', 'email', 'firstName', 'lastName', 'lastOrder', 'lastOrder2', 'lastOrder3', 'award')
-  #     expect(json['id']).to_not eq(nil)
-  #
-  #   end
-  #
-  #   it "returns 400 for missing email with error message" do
-  #     post "/customers", :params => {customer: { :firstName => @firstName, :lastName => @lastName} }
-  #
-  #     expect(response.status).to eq(400)
-  #     json = JSON.parse(response.body)
-  #
-  #     expect(json['email']).to include("can't be blank")
-  #
-  #   end
-  #
-  #   it "returns 400 for invalid email with error message" do
-  #     post "/customers", :params => {customer: { email: 'NotAnEmail', firstName: @firstName, lastName: @lastName} }
-  #
-  #     expect(response.status).to eq(400)
-  #     json = JSON.parse(response.body)
-  #
-  #     expect(json['email']).to include("Must be valid email address")
-  #
-  #   end
-  # end
+    
+    describe "POST /orders (create)" do
+        it 'returns a 201 success status when passed a valid itemId and email' do
+          
+          params = { itemId: 123456, email: "dw@csumb.edu" }
+          post '/orders', :params => params, :headers => @headers
+          
+          expect(response).to have_http_status(201)
+          expect(response.body).to eq('')
+        end 
+        
+        it 'returns a 400 code and error message when itemId is missing' do
+          
+          params = { email: "dw@csumb.edu" }
+          post '/orders', :params => params, :headers => @headers
+          
+          expect(response).to have_http_status(400)
+          expect(response.body).to_not eq('')
+          json = JSON.parse(response.body)
+          expect(json.keys).to include('errors')
+          expect(json['errors']).to_not eq('')
+          
+        end 
+        
+        it 'returns a 400 code and error message when email is missing' do
+          
+          params = { itemId: 123456 }
+          post '/orders', :params => params, :headers => @headers
+          
+          expect(response).to have_http_status(400)
+          expect(response.body).to_not eq('')
+          json = JSON.parse(response.body)
+          expect(json.keys).to include('errors')
+          expect(json['errors']).to_not eq('')
+          
+        end 
+        
+        # it 'get item information for non existent item should return 404' do 
+        #   headers = { "ACCEPT" => "application/json"}    # Rails 4 
+        #   get '/items/0', headers: headers
+        #   expect(response).to have_http_status(404)
+        #   #json_response = JSON.parse(response.body) 
+        #   #expect(json_response.length).to eq 0
+        # end 
+    end
+    
+    # describe "POST /items" do
+    #     # it 'post of new item should return item information' do
+    #     #   headers = { "CONTENT_TYPE" => "application/json" ,
+    #     #               "ACCEPT" => "application/json"}    # Rails 4
+    #     #   item_new = {description: '14k Gold Wedding Band', price: 277.99, stockQty: 3} 
+    #     #   post '/items',  params: item_new.to_json, headers: headers
+    #     #   expect(response).to have_http_status(201)
+    #     #   item = JSON.parse(response.body) 
+    #     #   expect(item.keys).to include( 
+    #     #     'id',
+    #     #     'description',
+    #     #     'price',
+    #     #     'stockQty')
+    #     #   expect(item['description']).to eq '14k Gold Wedding Band'
+    #     #   expect(item['price']).to eq '277.99'
+    #     #   expect(item['stockQty']).to eq 3
+          
+    #     #   # check that database has been updated
+    #     #   itemdb = Item.find(item['id'])
+    #     #   expect(itemdb.description).to eq '14k Gold Wedding Band'
+    #     #   expect(itemdb.price).to eq 277.99
+    #     #   expect(itemdb.stockQty).to eq 3
+    #     end 
+        
+      #   it 'post of new item missing price information should return 400 and error msg' do
+      #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+      #   #   #             "ACCEPT" => "application/json"}    # Rails 4
+      #   #   # item_new = {description: '14k Gold Wedding Band', stockQty: 3} 
+      #   #   # post '/items',  params: item_new.to_json, headers: headers
+      #   #   # expect(response).to have_http_status(400)
+      #   #   # item = JSON.parse(response.body) 
+      #   #   # expect(item.keys).to include('price')
+      #   #   # expect(item['price']).to eq ["can't be blank", "is not a number"]
+      #   # end 
+        
+      #   # it 'post of new item missing stock information should return 400 and error msg' do
+      #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+      #   #   #             "ACCEPT" => "application/json"}    # Rails 4
+      #   #   # item_new = {description: '14k Gold Wedding Band', price: 3.99} 
+      #   #   # post '/items',  params: item_new.to_json, headers: headers
+      #   #   # expect(response).to have_http_status(400)
+      #   #   # item = JSON.parse(response.body) 
+      #   #   # expect(item.keys).to include('stockQty')
+      #   #   # expect(item['stockQty']).to eq ["can't be blank", "is not a number"]
+      #   # end 
+        
+      #   # it 'post of new item missing description information should return 400 and error msg' do
+      #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+      #   #   #             "ACCEPT" => "application/json"}    # Rails 4
+      #   #   # item_new = {price: 3.99, stockQty: 5} 
+      #   #   # post '/items',  params: item_new.to_json, headers: headers
+      #   #   # expect(response).to have_http_status(400)
+      #   #   # item = JSON.parse(response.body) 
+      #   #   # expect(item.keys).to include('description')
+      #   #   # expect(item['description']).to eq ["can't be blank"]
+      #   # end 
+        
+      #   # it 'post of new item should with non numeric stockQty should return 400 and error' do
+      #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+      #   #   #             "ACCEPT" => "application/json"}    # Rails 4
+      #   #   # item_new = {description: '14k Gold Wedding Band', price: 5.99, stockQty: 'a'} 
+      #   #   # post '/items',  params: item_new.to_json, headers: headers
+      #   #   # expect(response).to have_http_status(400)
+      #   #   # item = JSON.parse(response.body)
+      #   #   # expect(item['stockQty']).to eq ["is not a number"]
+      #   # end
+        
+      #   # it 'post of new item should with non numeric price should return 400 and error' do
+      #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+      #   #   #             "ACCEPT" => "application/json"}    # Rails 4
+      #   #   # item_new = {description: '14k Gold Wedding Band', price: 'a', stockQty: 3} 
+      #   #   # post '/items',  params: item_new.to_json, headers: headers
+      #   #   # expect(response).to have_http_status(400)
+      #   #   # item = JSON.parse(response.body)
+      #   #   # expect(item['price']).to eq ["is not a number"]
+      #   # end
+        
+      # end
+    
+    # describe "PUT /items/" do
+    #   # it 'update of a item should return updated item information' do
+    #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+    #   #   #             "ACCEPT" => "application/json"}    # Rails 4
+    #   #   # item_new = {description: '15k Gold Wedding Band', price: 999.99, stockQty: 5}
+    #   #   # post '/items',  params: item_new.to_json, headers: headers
+    #   #   # expect(response).to have_http_status(201)
+    #   #   # item = JSON.parse(response.body)   
+    #   #   # # update the item price and issue http put
+    #   #   # item['price']= 799.99
+    #   #   # put '/items', params: item.to_json, headers: headers 
+    #   #   # expect(response).to have_http_status(200)
+    #   #   # item_returned = JSON.parse(response.body)
+    #   #   # expect(item_returned['price']).to eq item['price'].to_s
+        
+    #   #   # # verify db change
+    #   #   # itemdb = Item.find(item['id'])
+    #   #   # expect(itemdb.price).to eq item['price']
+    #   # end 
+      
+    #   # it 'update of non existant item should return 404' do
+    #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+    #   #   #             "ACCEPT" => "application/json"}    # Rails 4
+    #   #   # item_update = {id: 3, description: '24k Platinum Band', price: 1999.99, stockQty: 1}
+    #   #   # put '/items', params: item_update.to_json, headers: headers
+    #   #   # expect(response).to have_http_status(404)
+    #   # end
+    # end
+    
+    # describe "PUT /items/order" do
+    #   # it 'Place item order for item 1' do
+    #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+    #   #   #             "ACCEPT" => "application/json"} 
+    #   #   # item = Hash.new
+    #   #   # item[:id] = 1
+    #   #   # put  '/items/order', params: item.to_json, headers: headers
+    #   #   # expect(response).to have_http_status(204)
+    #   #   # itemdb = Item.find(1)
+    #   #   # expect(itemdb.stockQty).to eq 4
+    #   # end
+      
+    #   # it 'Place item order for non existent item returns 404' do
+    #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+    #   #   #             "ACCEPT" => "application/json"} 
+    #   #   # item = Hash.new
+    #   #   # item[:id] = 3
+    #   #   # put  '/items/order', params: item.to_json, headers: headers
+    #   #   # expect(response).to have_http_status(404)
+    #   #   # begin
+    #   #   #   itemdb = Item.find(3)
+    #   #   # rescue ActiveRecord::RecordNotFound => e
+    #   #   #   itemdb = nil
+    #   #   # end
+    #   #   # expect(itemdb).to eq nil
+    #   # end
+      
+    #   # it 'Place item order for item that has no stock returns 400' do
+    #   #   # Item.create(description: '11k Gold Wedding Band', price: 1277.99, stockQty: 0 )
+    #   #   # headers = { "CONTENT_TYPE" => "application/json" ,
+    #   #   #             "ACCEPT" => "application/json"} 
+    #   #   # item = Hash.new
+    #   #   # item[:id] = 2
+    #   #   # put  '/items/order', params: item.to_json, headers: headers
+    #   #   # expect(response).to have_http_status(400)
+    #   # end
+    # end
 
 end

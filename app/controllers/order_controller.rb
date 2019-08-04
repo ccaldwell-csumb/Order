@@ -2,7 +2,16 @@ class OrderController < ApplicationController
 
 
   def create
-    # @customer = Customer.create(customer_params)
+    
+    unless params.keys.include? 'itemId' and params.keys.include? 'email'
+      response = { "errors":  "itemId and email are required fields" }
+      return render :json => response.to_json, :status => 400
+    end
+
+    head 201
+  
+    
+    # @customer = Customer.create(order_params)
     # @customer.lastOrder = 0
     # @customer.lastOrder2 = 0
     # @customer.lastOrder3 = 0c
@@ -72,7 +81,7 @@ class OrderController < ApplicationController
   private
 
   def order_params
-    params.permit(:email, :firstName, :lastName)
+    params.permit(:itemId, :email)
   end
 
   def select_without(columns)
