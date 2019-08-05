@@ -102,44 +102,38 @@ class OrderController < ApplicationController
       end
       
     end
-  
-        
-    # if params.keys.include? 'email'
-    #   key = 'email'
-    # elsif params.keys.include? 'id'
-    #   key = 'id'
-    # else
-    #   render json: { error: 'No key specified' }, status: 404
-    # end
-    #
-    # @customer = Customer.where("#{key} = '#{params[key]}'").first
-    #
-    # if @customer
-    #   render json: @customer, status: 200
-    # else
-    #   head 404
-    # end
-
   end
 
 
   def find
 
-    # if params.keys.include? 'email'
-    #   key = 'email'
-    # elsif params.keys.include? 'id'
-    #   key = 'id'
-    # else
-    #   render json: { error: 'No key specified' }, status: 404
-    # end
-    #
-    # @customer = Customer.where("#{key} = '#{params[key]}'").first
-    #
-    # if @customer
-    #   render json: @customer, status: 200
-    # else
-    #   head 404
-    # end
+    if params.keys.include? 'customerId'
+      
+      customerId = params['customerId']
+      
+    elsif params.keys.include? 'email'
+    
+      # Find customer by email
+      email = params[:email]
+      customer_response = HTTParty.get(
+        $customer_uri + "/customers", 
+        query: {"email" => email})
+        
+      unless customer_response.code == :success
+        return render :json => [], :status => 200
+      end
+    
+      customer = JSON.parse(customer_response.body)
+      customerId = customer['id']
+    end
+    
+    @orders = Order.where("customerId = '#{customerId}'")
+    
+    if @orders
+      render json: @orders, status: 200
+    else
+      head 404
+    end
 
   end
 

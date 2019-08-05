@@ -4,6 +4,5 @@ Rails.application.routes.draw do
   # Orders
   post '/orders', to: 'order#create'
   get '/orders/:id', to: 'order#show'
-  get '/orders/:customerId', to: 'order#find'
-  get '/orders/:email', to: 'order#find'
+  get '/orders', to: 'order#find'
 end
