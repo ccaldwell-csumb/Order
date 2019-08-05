@@ -2,22 +2,64 @@ require 'rails_helper'
 
 RSpec.describe 'Orders', type: :request do
   
-  @headers = { "ACCEPT" => "application/json"}
-
-  # before(:each) do 
-        
-  #   end
+  $headers = { "ACCEPT" => "application/json"}
+  
+  $order_uri = 'http://localhost:8080'            
+  $customer_uri = 'http://localhost:8081'
+  $item_uri = 'http://localhost:8082'
+  
+  $mockItem = {"id"=>1, "description"=>"Diamond Ring", "price"=> 999.99, "stockQty"=>3} 
+  $mockCustomer = {
+     'id' => 1,
+     'email' => 'ccaldwell@csumb.edu',
+     'lastName' => 'caldwell',
+     'firstName' => 'chris',
+     'lastOrder' => 0.00,
+     'lastOrder2' => 0.00,
+     'lastOrder3' => 0.00,
+     'award' => 0.00
+    }
     
+  $mockOrder = {
+     "itemId" => $mockItem['id'],
+     "description" => $mockItem['description'],
+     "customerId" => $mockCustomer['id'],
+     "price" => $mockItem['price'],
+     "award" => $mockCustomer['award'],
+     "total" => $mockItem['price'] - $mockCustomer['award']
+   }
+
     describe "POST /orders (create)" do
-        it 'returns a 201 success status when passed a valid itemId and email' do
+        it 'returns 201 and the JSON object representing the created order' do
           
-          params = { itemId: 123456, email: "dw@csumb.edu" }
-          post '/orders', :params => params, :headers => @headers
+          # make double for item find
+          mock_item_response = double(:code => :success, :body => $mockItem.to_json)
+          allow(HTTParty).to receive(:get).with($item_uri + "/items/#{$mockItem['id']}").and_return(mock_item_response)
           
-          expect(response).to have_http_status(201)
-          expect(response.body).to eq('')
+          # make double for customer find
+          mock_customer_response = double(:code => :success, :body => $mockCustomer.to_json)
+          allow(HTTParty).to receive(:get).with(
+            $customer_uri + "/customers/#{$mockCustomer['email']}", any_args).and_return(mock_customer_response)
+          
+          # make doubles for updates to item and customer services
+          allow(HTTParty).to receive(:put).with($item_uri + "/items/order", any_args).and_return(double(:code => 204))
+          allow(HTTParty).to receive(:put).with($customer_uri + "/customers/order", any_args).and_return(double(:code => 204))
+          
+          
+          # response = double(:body => newOrder.to_json)
+          params = { itemId: $mockItem['id'], email: $mockCustomer['email'] }
+          post '/orders', params: params, headers: $headers
+          
+          expect(response).to have_http_status("201")
+          json_response = JSON.parse(response.body)
+          
+          # verify each field
+          $mockOrder.each_key do |key|
+            expect(json_response[key]).to eq($mockOrder[key.to_s])
+          end
+          
         end 
-        
+      
         it 'returns a 400 code and error message when itemId is missing' do
           
           params = { email: "dw@csumb.edu" }
@@ -44,13 +86,6 @@ RSpec.describe 'Orders', type: :request do
           
         end 
         
-        # it 'get item information for non existent item should return 404' do 
-        #   headers = { "ACCEPT" => "application/json"}    # Rails 4 
-        #   get '/items/0', headers: headers
-        #   expect(response).to have_http_status(404)
-        #   #json_response = JSON.parse(response.body) 
-        #   #expect(json_response.length).to eq 0
-        # end 
     end
 
       before(:each) do 
