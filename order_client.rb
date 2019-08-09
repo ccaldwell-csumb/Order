@@ -36,6 +36,7 @@ class OrderClient
       puts "status code " + response.code.to_s
       puts response.body
   end
+  
 
   def self.retrieveByCustomerEmail(args)
     body = { email: args[0] }
@@ -83,7 +84,7 @@ class OrderClient
   
   def self.lookupCustomerById(args)
     response = HTTParty.get(
-        @customer_uri + "/customers/#{args[0]}",
+        @customer_uri + "/customers?id=#{args[0]}",
         :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json' }
     )
     puts "status code " + response.code.to_s
@@ -91,10 +92,8 @@ class OrderClient
   end
   
   def self.lookupCustomerByEmail(args)
-    query = { email: args[0] }
     response = HTTParty.get(
-        @customer_uri + '/customers/email',
-        :query => query,
+        @customer_uri + "/customers?email=#{args[0]}",
         :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json' }
     )
     puts "status code " + response.code.to_s

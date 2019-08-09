@@ -21,7 +21,8 @@ class OrderController < ApplicationController
     item_response = HTTParty.get(
       $item_uri + "/items/#{itemId}")
       
-    unless item_response.code == :success
+      
+    unless item_response.code == 200
       response = { "errors": "could not find item with id #{itemId}" }
       return render :json => response, :status => 400
     end
@@ -38,10 +39,9 @@ class OrderController < ApplicationController
     # Find customer by email
     email = params[:email]
     customer_response = HTTParty.get(
-      $customer_uri + "/customers/#{email}", 
-      query: {"email" => email})
+      $customer_uri + "/customers?email=#{email}")
       
-    unless customer_response.code == :success
+    unless customer_response.code == 200
       response = { "errors": "could not find customer with email #{email}" }
       return render :json => response, :status => 400
     end
@@ -67,15 +67,19 @@ class OrderController < ApplicationController
     @order.reload
     
     # send order info to Customer service
-    customer_response = HTTParty.put $customer_uri + '/customers/order', params: @order.to_json
+    customer_response = HTTParty.put $customer_uri + '/customers/order', 
+    :body => {'customerId' => @order.customerId, 'price' => @order.price}
+    
+    
     unless customer_response.code == 204
       response = { "errors": "There was a problem notifying the customer service about the order." }
       return render :json => response, :status => 400
     end
     
     # send order info to Item service
-    item_response = HTTParty.put $item_uri + '/items/order', params: @order.to_json
-    unless customer_response.code == 204
+    item_response = HTTParty.put $item_uri + '/items/order', :body => {'itemId' => @order.itemId}
+    
+    unless item_response.code == 204
       response = { "errors": "There was a problem notifying the item service about the order." }
       return render :json => response, :status => 400
     end
