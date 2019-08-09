@@ -122,9 +122,10 @@ class OrderController < ApplicationController
       customer_response = HTTParty.get(
         $customer_uri + "/customers", 
         query: {"email" => email})
-        
-      unless customer_response.code == :success
-        return render :json => [], :status => 200
+      puts customer_response.code  
+      puts customer_response.body
+      unless customer_response.code == 200
+        return render :json => [], :status => 404
       end
     
       customer = JSON.parse(customer_response.body)
