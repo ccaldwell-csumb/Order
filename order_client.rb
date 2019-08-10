@@ -115,7 +115,7 @@ class OrderClient
   
   def self.lookupItemById(args)
     response = HTTParty.get(
-        @item_uri + "/items/#{args[0]}",
+        @item_uri + "/items/#{args}",
         :headers => @headers
     )
     puts "status code " + response.code.to_s
@@ -129,20 +129,32 @@ command = ''
 
 while command != 'quit'
 
-  puts 'What do you want to do: order, retrieve, register, email, id, create, lookup or quit'
+  puts 'What do you want to do?'
+  puts ''
+  puts '0 = (quit)'
+  puts '1 = create (order)' 
+  puts '2 = (retrieve) order'
+  puts '3 = (register) customer'
+  puts '4 = find customer by (email)'
+  puts '5 = find customer by (id)'
+  puts '6 = (create) new item'
+  puts '7 = (lookup) item by id'
+  puts ''
+  print '>'
+  
   command = gets.chomp!
 
   case command.downcase
-  when 'order'
+  when 'order', '1'
     puts 'enter itemID, and email for new order'
     args = gets.chomp!.split(' ')
     OrderClient.createNewOrder(args)
-  when 'retrieve'
+  when 'retrieve', '2'
     puts 'Search orders by: id, customerId or email'
     orderFind = gets.chomp!
     case orderFind.downcase
-      when 'id'
-        puts 'enter id'
+      when 'orderid'
+        puts 'enter order id'
         args = gets.chomp!
         OrderClient.retrieveByOrderId(args)
       when 'customerid'
@@ -154,19 +166,19 @@ while command != 'quit'
         args = gets.chomp!
         OrderClient.retrieveByCustomerEmail(args)
     end
-  when 'register'
+  when 'register', '3'
     puts 'enter lastName, firstName and email for new customer'
     args = gets.chomp!.split(' ')
     OrderClient.registerNewCustomer(args)
-  when 'email'
+  when 'email', '4'
     puts 'enter email'
     args = gets.chomp!.split(' ')
     OrderClient.lookupCustomerByEmail(args)
-  when 'id'
+  when 'id', '5'
     puts 'enter id'
     args = gets.chomp!
     OrderClient.lookupCustomerById(args)
-  when 'create'
+  when 'create', '6'
     args = Hash.new
     puts 'enter description'
     args[:description] = gets.chomp!
@@ -175,11 +187,11 @@ while command != 'quit'
     puts 'enter stockQty'
     args[:stockQty] = gets.chomp!
     OrderClient.createNewItem(args)
-  when 'lookup'
+  when 'lookup', '7'
     puts 'enter item id'
     args = gets.chomp!
     OrderClient.lookupItemById(args)
-  when 'quit'
+  when 'quit', '0'
     return
   end
   puts ''
