@@ -33,13 +33,13 @@ RSpec.describe 'Orders', type: :request do
         it 'returns 201 and the JSON object representing the created order' do
           
           # make double for item find
-          mock_item_response = double(:code => :success, :body => $mockItem.to_json)
+          mock_item_response = double(:code => 200, :body => $mockItem.to_json)
           allow(HTTParty).to receive(:get).with($item_uri + "/items/#{$mockItem['id']}").and_return(mock_item_response)
           
           # make double for customer find
-          mock_customer_response = double(:code => :success, :body => $mockCustomer.to_json)
+          mock_customer_response = double(:code => 200, :body => $mockCustomer.to_json)
           allow(HTTParty).to receive(:get).with(
-            $customer_uri + "/customers/#{$mockCustomer['email']}", any_args).and_return(mock_customer_response)
+            $customer_uri + "/customers?email=#{$mockCustomer['email']}", any_args).and_return(mock_customer_response)
           
           # make doubles for updates to item and customer services
           allow(HTTParty).to receive(:put).with($item_uri + "/items/order", any_args).and_return(double(:code => 204))
@@ -164,9 +164,9 @@ RSpec.describe 'Orders', type: :request do
         it 'get array of orders by email status code = 200' do
           
           # stub out http call to Customer service to get customerId
-          mock_customer_response = double(:code => :success, :body => $mockCustomer.to_json)
+          mock_customer_response = double(:code => 200, :body => $mockCustomer.to_json)
           allow(HTTParty).to receive(:get).with(
-            $customer_uri + "/customers", any_args).and_return(mock_customer_response)
+            $customer_uri + "/customers?email=#{$mockCustomer['email']}").and_return(mock_customer_response)
           
           
           params = { email: $mockCustomer['email'] }
@@ -183,13 +183,14 @@ RSpec.describe 'Orders', type: :request do
         
         it 'get empty array if email not found, code = 200' do
           
+          bad_email = "missing@email.com"
           # stub out http call to Customer service to get customerId
           mock_customer_response = double(:code => 404)
           allow(HTTParty).to receive(:get).with(
-            $customer_uri + "/customers", any_args).and_return(mock_customer_response)
+            $customer_uri + "/customers?email=#{bad_email}").and_return(mock_customer_response)
           
           
-          params = { email: "missing@email.com" }
+          params = { email: bad_email}
           get '/orders', params: params, headers: $headers
           
           expect(response).to have_http_status("200")

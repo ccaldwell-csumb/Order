@@ -110,7 +110,7 @@ class OrderController < ApplicationController
 
 
   def find
-
+    
     if params.keys.include? 'customerId'
       
       customerId = params['customerId']
@@ -120,12 +120,9 @@ class OrderController < ApplicationController
       # Find customer by email
       email = params[:email]
       customer_response = HTTParty.get(
-        $customer_uri + "/customers", 
-        query: {"email" => email})
-      puts customer_response.code  
-      puts customer_response.body
+      $customer_uri + "/customers?email=#{email}")
       unless customer_response.code == 200
-        return render :json => [], :status => 404
+        return render :json => [], :status => 200
       end
     
       customer = JSON.parse(customer_response.body)

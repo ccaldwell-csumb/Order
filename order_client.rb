@@ -49,9 +49,9 @@ class OrderClient
   end
   
   def self.retrieveByOrderId(args)
-    body = { id: args[0] }
+    body = { id: args}
     response = HTTParty.get(
-        @order_uri + "/orders/#{args[0]}",
+        @order_uri + "/orders/#{args}",
         :body => body.to_json,
         :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json' }
     )
@@ -60,7 +60,7 @@ class OrderClient
   end
   
   def self.retrieveByCustomerId(args)
-    body = { customerId: args[0] }
+    body = { customerId: args }
     response = HTTParty.get(
         @order_uri + '/orders',
         :body => body.to_json,
@@ -82,7 +82,7 @@ class OrderClient
   end
   
   def self.lookupCustomerById(args)
-    body = { id: args[0]}
+    body = { id: args}
     response = HTTParty.get(
         @customer_uri + "/customers",
         :body => body.to_json,
@@ -93,10 +93,8 @@ class OrderClient
   end
   
   def self.lookupCustomerByEmail(args)
-    query = { email: args[0] }
     response = HTTParty.get(
-        @customer_uri + "/customers",
-        :query => query,
+        @customer_uri + "/customers?email=#{args[0]}",
         :headers => {'Content-Type' => 'application/json', 'Accept' => 'application/json' }
     )
     puts "status code " + response.code.to_s
@@ -153,7 +151,7 @@ while command != 'quit'
     puts 'Search orders by: id, customerId or email'
     orderFind = gets.chomp!
     case orderFind.downcase
-      when 'orderid'
+      when 'id'
         puts 'enter order id'
         args = gets.chomp!
         OrderClient.retrieveByOrderId(args)
